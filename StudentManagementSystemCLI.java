@@ -1,6 +1,21 @@
-class StudentManagementSystemCLI {
+import java.util.*;
 
-    static String[] regNo = {
+class StudentManagementSystemCLI {
+    // Batch status
+    public static final int ENROLLMENTOPEN = 1;
+    public static final int ENROLLMENTCLOSED = 0;
+
+    // Student status
+    public static final int INACTIVE = -1;
+    public static final int ACTIVE = 0;
+    public static final int DELIVEREDCOMPLETED = 1;
+
+    // Batch data
+    static int[] batchNameArray = { 105, 106, 107, 108, 109, 110 };
+    static int[] batchStatusArray = { 0, 0, 0, 0, 1, 1 };
+
+    // Student data
+    static String[] regNoArray = {
             "PR24105001", "PR24105002", "PR24105003", "PR24105004", "PR24105005",
             "PR24105006", "PR24105007", "PR24105008", "PR24105009", "PR24105010",
             "OR24105011", "OR24105012", "OR24105013", "OR24105014", "OR24105015",
@@ -34,7 +49,32 @@ class StudentManagementSystemCLI {
 
     };
 
-    static String[] name = {
+    static String[] nicArray={
+        "199501012345", "199503153872", "199506202198", "199509102983", "199511258739",
+    "199512303498", "199502183764", "199504223198", "199508153210", "199510293417",
+    "199601102375", "199604182938", "199606243879", "199608142178", "199610312475",
+    "199611173452", "199603293481", "199605083217", "199607232198", "199609192375",
+    "199701212483", "199703132487", "199706253478", "199708083298", "199710243651",
+    "199712152983", "199702182734", "199704293187", "199705142375", "199709083751",
+    "199801032874", "199803232871", "199806193428", "199808013764", "199810242374",
+    "199812302984", "199802152348", "199805213471", "199807172398", "199811283472",
+    "199901122471", "199903052984", "199906213874", "199908093412", "199910273894",
+    "199912153482", "199902202394", "199904163874", "199907293481", "199911083479",
+    "200001112374", "200003143478", "200006293874", "200008103471", "200010252984",
+    "200012043894", "200002193874", "200004212374", "200005183492", "200007153871",
+    "200101232984", "200103083471", "200106273894", "200108123984", "200110043728",
+    "200112213874", "200102253471", "200104103874", "200105293784", "200107202983",
+    "200201013874", "200203253471", "200206143874", "200208083471", "200210293874",
+    "200212183471", "200202103874", "200204123894", "200205283471", "200207153874",
+    "200301093874", "200303283471", "200306153874", "200308123471", "200310083874",
+    "200312243471", "200302273874", "200304203471", "200305123874", "200307213471",
+    "200401153874", "200403123471", "200406293874", "200408083471", "200410213874",
+    "200412153471", "200402203874", "200404273471", "200405143874", "200407183471",
+    "200501023874", "200503193471", "200506153874", "200508213471", "200510083874",
+    "200512293471", "200502123874", "200504153471", "200505283874", "200507173471"
+    };
+
+    static String[] nameArray = {
             "Gunawardena Weerasinghe", "Senanayake Silva", "Silva Kumara", "Kumara Herath", "Rathnayake Herath",
             "Wijesinghe Bandara", "Rajapaksha Herath", "Senanayake Karunaratne", "Karunaratne Jayasinghe",
             "Gunawardena Silva",
@@ -80,7 +120,7 @@ class StudentManagementSystemCLI {
 
     };
 
-    static int[] prf = {
+    static int[] prfArray = {
             85, 39, -1, 72, 44,
             91, 60, 38, 95, 49,
             -1, 67, 23, 58, 88,
@@ -114,7 +154,7 @@ class StudentManagementSystemCLI {
 
     };
 
-    static int[] dbms = {
+    static int[] dbmsArray = {
             66, 45, 93, 58, -1,
             37, 88, 21, 79, 40,
             76, 54, -1, 69, 92,
@@ -147,7 +187,7 @@ class StudentManagementSystemCLI {
             -2, -2, -2, -2, -2
     };
 
-    static double[] gpa = {
+    static double[] gpaArray = {
             3.5, 1.375, -1, 2.75, -1,
             2.5, 3.375, 0.875, 3.875, 1.5,
             -1, 2.5, -1, 2.625, 4.0,
@@ -181,7 +221,7 @@ class StudentManagementSystemCLI {
 
     };
 
-    static int[] status = {
+    static int[] statusArray = {
             1, 0, -1, 1, -1,
             0, 1, 0, 1, 0,
             -1, 1, -1, 1, 1,
@@ -214,15 +254,467 @@ class StudentManagementSystemCLI {
             0, 0, 0, 0, 0,
     };
 
+    // console clear
+    public final static void clearConsole() {
+        try {
+            final String os = System.getProperty("os.name");
+            if (os.contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+            // Handle any exceptions.
+        }
+    }
+
+    // home page
+    public static void homePage() {
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tiCET Student Management System\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+        System.out.println("[1] Student Management");
+        System.out.println("[2] Batch Management ");
+        System.out.println("[3] Grade Management");
+        System.out.println("[4] Report Generator");
+        System.out.println("[5] Exit");
+
+        Scanner input = new Scanner(System.in);
+        do {
+
+            System.out.print("\nEnter an option to continue > ");
+            int option = input.nextInt();
+
+            switch (option) {
+                case 1:
+                    clearConsole();
+                    studentManagement();
+                    break;
+                case 2:
+                    clearConsole();
+                    batchManagement();
+                    break;
+                case 3:
+                    clearConsole();
+                    gradeManagement();
+                    break;
+                case 4:
+                    clearConsole();
+                    reportGenerator();
+                    break;
+                case 5:
+                    exit();
+                    break;
+            }
+        } while (true);
+    }
+
+    // Student Management
+    public static void studentManagement() {
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tStudent Management\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+        System.out.println("[1] Add Student");
+        System.out.println("[2] Update Student ");
+        System.out.println("[3] View Student's Profile");
+        System.out.println("[4] Exit");
+
+        Scanner input = new Scanner(System.in);
+        do {
+
+            System.out.print("\nEnter an option to continue > ");
+            int option = input.nextInt();
+
+            switch (option) {
+                case 1:
+                    clearConsole();
+                    addStudent();
+                    break;
+                case 2:
+                    clearConsole();
+                    updateStudent();
+                    break;
+                case 3:
+                    clearConsole();
+                    viewStudentsProfile();
+                    break;
+                case 4:
+                    exittoHomePage();
+                    break;
+            }
+        } while (true);
+
+    }
+
+    // Add Student
+    public static void addStudent() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tAdd Student\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+        L1: do {
+            System.out.print("Enter Batch Number (Students should be added): ");
+            int batch=input.nextInt();
+            if(checkBatchStatus(batch)){
+                L3:do{
+                    System.out.print("Enter Student Name: ");
+                String name=input.nextLine();
+                System.out.print("Enter Student NIC: ");
+                String nic=input.nextLine();
+                System.out.print("Enter Lecturer Mode (1-PHYSICAL 0-ONLINE): ");
+                int lectureMode=input.nextInt();
+                if(!checkedNic(nic)){
+                    String[] tempRegNoArray=new String[regNoArray.length+1];
+                    String[] tempNameArray=new String[regNoArray.length+1];
+                    String[] tempNicArray=new String[regNoArray.length+1];
+                    int[] tempPrfArray=new int[regNoArray.length+1];
+                    int[] tempDbmsArray=new int[regNoArray.length+1];
+                    double[] tempGpaArray=new double[regNoArray.length+1];
+                    int[] tempStatusArray=new int[regNoArray.length+1];
+
+                    for(int i=0;i<regNoArray.length;i++){
+                        tempRegNoArray[i]=regNoArray[i];
+                        tempNameArray[i]=nameArray[i];
+                        tempNicArray[i]=nicArray[i];
+                        tempPrfArray[i]=prfArray[i];
+                        tempDbmsArray[i]=dbmsArray[i];
+                        tempGpaArray[i]=gpaArray[i];
+                        tempStatusArray[i]=statusArray[i];
+                    }
+                    tempRegNoArray[tempRegNoArray.length-1]=generatestudentId(lectureMode);
+                    tempNameArray[tempRegNoArray.length-1]=name;
+                    tempNicArray[tempRegNoArray.length-1]=nic;
+                    tempPrfArray[tempRegNoArray.length-1]=-2;
+                    tempDbmsArray[tempRegNoArray.length-1]=-2;
+                    tempGpaArray[tempRegNoArray.length-1]=0;
+                    tempStatusArray[tempRegNoArray.length-1]=0;
+
+                    regNoArray=tempRegNoArray;
+                    nameArray=tempNameArray;
+                    nicArray=tempNicArray;
+                    prfArray=tempPrfArray;
+                    dbmsArray=tempDbmsArray;
+                    gpaArray=tempGpaArray;
+                    statusArray=tempStatusArray;
+
+                    System.out.print("\nStudent was successfully added to the system.");
+                    L2:do{
+                        System.out.print("\nDo you want to add another student (Y/N): ");
+                        String option=input.next();
+                        if(option.equalsIgnoreCase("Y")){
+                            clearConsole();
+                            addStudent();
+                        }else if(option.equalsIgnoreCase("N")){
+                            clearConsole();
+                            homePage();
+                        }else{
+                            System.out.println("\tInvalid option..input again...");
+                            continue L2;
+                        }
+                    }while(true);
+
+                }else{
+                    System.out.print("\n\tThis student is already added to the system.");
+                L2:do{
+                    System.out.print("\nDo you want to add another student to this Batch (Y/N): ");
+                    String option=input.next();
+                    if(option.equalsIgnoreCase("Y")){
+                        // Clear the lines
+                        System.out.print("\033[4A");  
+                        System.out.print("\033[0J"); 
+                        continue L3;
+                    }else if(option.equalsIgnoreCase("N")){
+                        clearConsole();
+                        homePage();
+                    }else{
+                        System.out.println("\tInvalid option..input again...");
+                        continue L2;
+                    }
+                }while(true);
+                }
+
+                }while(true);
+
+            }else{
+                System.out.print("\n\tStudents cannot be added to this batch because enrollment is closed.");
+                L2:do{
+                    System.out.print("\nDo you want to add student to another Batch (Y/N): ");
+                    String option=input.next();
+                    if(option.equalsIgnoreCase("Y")){
+                        clearConsole();
+                        addStudent();
+                    }else if(option.equalsIgnoreCase("N")){
+                        clearConsole();
+                        homePage();
+                    }else{
+                        System.out.println("\tInvalid option..input again...");
+                        continue L2;
+                    }
+                }while(true);
+            }
+        } while (true);
+    }
+
+    //check batch status
+    public static boolean checkBatchStatus(int batch){
+        for(int i=0;i<batchNameArray.length;i++){
+            if(batchNameArray[i]==batch){
+                if(batchStatusArray[i]==1){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //check NIC
+    public static boolean checkedNic(String nic){
+        for(int i=0;i<nicArray.length;i++){
+            if(nic.equals(nicArray[i])){
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    //generate student Id
+    public static String generatestudentId(int lectureMode){
+        String lastId=regNoArray[regNoArray.length-1];
+        String id="";
+        int lastdigits=Integer.parseInt(lastId.substring(lastId.length() - 2));
+        if(lectureMode==0){
+            id="OR"+lastId.substring(2, 7)+String.format("%03d", lastdigits+1);
+        }else{
+            id="OR"+lastId.substring(2, 7)+String.format("%03d", lastdigits+1);
+        }
+        return id;
+    }
+    // Update Student
+    public static void updateStudent() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tUpdate Student\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+    }
+
+    // View Students Profile
+    public static void viewStudentsProfile() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tView Student's Profile\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+    }
+
+    // Batch Management
+    public static void batchManagement() {
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tBatch Management\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+        System.out.println("[1] Add Batch");
+        System.out.println("[2] Update Batch ");
+        System.out.println("[3] View Batch");
+        System.out.println("[4] Exit");
+
+        Scanner input = new Scanner(System.in);
+        do {
+
+            System.out.print("\nEnter an option to continue > ");
+            int option = input.nextInt();
+
+            switch (option) {
+                case 1:
+                    clearConsole();
+                    addBatch();
+                    break;
+                case 2:
+                    clearConsole();
+                    updateBatch();
+                    break;
+                case 3:
+                    clearConsole();
+                    viewBatch();
+                    break;
+                case 4:
+                    exittoHomePage();
+                    break;
+            }
+        } while (true);
+
+    }
+
+    // Add Batch
+    public static void addBatch() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tAdd Batch\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // Update Batch
+    public static void updateBatch() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tUpdate Batch\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // View Batch
+    public static void viewBatch() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tView Batch\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // Grade Management
+    public static void gradeManagement() {
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tGrade Management\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+        System.out.println("[1] PRF Marks Update");
+        System.out.println("[2] DBMS Marks Update ");
+        System.out.println("[3] Exit");
+
+        Scanner input = new Scanner(System.in);
+        do {
+
+            System.out.print("\nEnter an option to continue > ");
+            int option = input.nextInt();
+
+            switch (option) {
+                case 1:
+                    clearConsole();
+                    prfMarksUpdate();
+                    break;
+                case 2:
+                    clearConsole();
+                    dbmsMarksUpdate();
+                    break;
+                case 3:
+                    exittoHomePage();
+                    break;
+            }
+        } while (true);
+
+    }
+
+    // PRF Marks Update
+    public static void prfMarksUpdate() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tPRF Marks Update\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // DBMS Marks Update
+    public static void dbmsMarksUpdate() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tDBMS Marks Update\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // Report Generator
+    public static void reportGenerator() {
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tReport Generator\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+        System.out.println("[1] Batch Summary");
+        System.out.println("[2] Module Reports ");
+        System.out.println("[3] Batch Report");
+        System.out.println("[4] Exit");
+
+        Scanner input = new Scanner(System.in);
+        do {
+
+            System.out.print("\nEnter an option to continue > ");
+            int option = input.nextInt();
+
+            switch (option) {
+                case 1:
+                    clearConsole();
+                    batchSummary();
+                    break;
+                case 2:
+                    clearConsole();
+                    moduleReport();
+                    break;
+                case 3:
+                    clearConsole();
+                    batchReport();
+                    break;
+                case 4:
+                    exittoHomePage();
+                    break;
+            }
+        } while (true);
+
+    }
+
+    // Batch Summary
+    public static void batchSummary() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tBatch Summary\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // Module Reports
+    public static void moduleReport() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tModule Report\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // Batch Report
+    public static void batchReport() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\tBatch Report\t\t\t\t|");
+        System.out.println("-------------------------------------------------------------------------\n");
+
+    }
+
+    // Exit
+    public static void exit() {
+        clearConsole();
+        System.out.println("\n\t\tYou left the program...\n");
+        System.exit(0);
+    }
+
+    // Exit to Home Page
+    public static void exittoHomePage() {
+        Scanner input = new Scanner(System.in);
+        L1: do {
+            System.out.print("\nDo you want to go to home page (Y/N): ");
+            String option = input.next();
+            if (option.equalsIgnoreCase("Y")) {
+                clearConsole();
+                homePage();
+            } else if (option.equalsIgnoreCase("N")) {
+                clearConsole();
+                exit();
+            } else {
+                System.out.println("\tInvalid option..input again...");
+                continue L1;
+            }
+        } while (true);
+    }
+
+    // main method
     public static void main(String args[]) {
-
-        System.out.println("regNo Array: " + regNo.length);
-        System.out.println("name Array: " + name.length);
-        System.out.println("prf Array: " + prf.length);
-        System.out.println("dbms Array: " + dbms.length);
-        System.out.println("gpa Array: " + gpa.length);
-        System.out.println("status Array: " + status.length);
-
+        homePage();
     }
 
 }
