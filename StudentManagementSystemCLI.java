@@ -366,7 +366,7 @@ class StudentManagementSystemCLI {
                 String nic=input.nextLine();
                 System.out.print("Enter Lecturer Mode (1-PHYSICAL 0-ONLINE): ");
                 int lectureMode=input.nextInt();
-                if(!checkedNic(nic)){
+                if((checkedNic(nic)==-1)){
                     String[] tempRegNoArray=new String[regNoArray.length+1];
                     String[] tempNameArray=new String[regNoArray.length+1];
                     String[] tempNicArray=new String[regNoArray.length+1];
@@ -471,13 +471,13 @@ class StudentManagementSystemCLI {
     }
 
     //check NIC
-    public static boolean checkedNic(String nic){
+    public static int checkedNic(String nic){
         for(int i=0;i<nicArray.length;i++){
             if(nic.equals(nicArray[i])){
-                    return true;
+                    return i;
             }
         }
-        return false;
+        return -1;
     }
 
     //generate student Id
@@ -498,6 +498,93 @@ class StudentManagementSystemCLI {
         System.out.println("-------------------------------------------------------------------------");
         System.out.println("|\t\t\t\tUpdate Student\t\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
+
+        
+        System.out.print("Enter Student Registration No: ");
+        String id=input.nextLine();
+
+        int index=findStudent(id);
+        if(index!=-1){
+            //System.out.println("\n\tRegistration no : "+regNoArray[index]);
+            System.out.println("\tStudet Name     : "+nameArray[index]);
+            System.out.println("\tStudet NIC     : "+nicArray[index]);
+
+            System.out.println("\nWhat do you want to update ? ");
+                System.out.println("\t(01) Student Name ");
+                System.out.println("\t(02) Student NIC ");
+                System.out.print("\nEnter your option - ");
+                int option=input.nextInt();
+                switch(option){
+                    case 1:
+                        clearConsole();
+                        System.out.println("\nStudent Name Update");
+                        System.out.println("====================\n");
+                        System.out.println("Registration No    - "+regNoArray[index]);
+                        System.out.println("Student NIC - "+nicArray[index]);
+                        System.out.print("\nEnter student name to update - ");
+                        String newName=input.nextLine();
+                        nameArray[index]=newName;
+                        System.out.println("\n\tStudent name updated successfully...");
+                        break;
+
+                    case 2:
+                        clearConsole();
+                        System.out.println("\nStudent NIC Update");
+                        System.out.println("====================\n");
+                        System.out.println("Registration No    - "+regNoArray[index]);
+                        System.out.println("Student Name - "+nicArray[index]);
+                        System.out.print("\nEnter student NIC to update - ");
+                        String newNic=input.nextLine();
+                        nicArray[index]=newNic;
+                        if(checkedNic(newNic)==-1){
+                            System.out.println("\n\tStudent NIC updated successfully...");
+                        }else{
+                            System.out.print("\n\tThis student is already added to the system...");
+                        }
+
+                        L:do{
+                            System.out.print("\nDo you want to update another student details (Y/N): ");
+                            String option1=input.next();
+                            if(option1.equalsIgnoreCase("Y")){
+                                clearConsole();
+                                updateStudent();
+                            }else if(option1.equalsIgnoreCase("N")){
+                                clearConsole();
+                                homePage();
+                            }else{
+                                System.out.println("\tInvalid option..input again...");
+                                continue L;
+                            }
+                        }while(true);
+                } 
+        }else{
+            System.out.print("\n\tThis student does not exist in the system.");
+            L:do{
+                System.out.print("\nDo you want to update another student details (Y/N): ");
+                String option=input.next();
+                if(option.equalsIgnoreCase("Y")){
+                    clearConsole();
+                    updateStudent();
+                }else if(option.equalsIgnoreCase("N")){
+                    clearConsole();
+                    homePage();
+                }else{
+                    System.out.println("\tInvalid option..input again...");
+                    continue L;
+                }
+            }while(true);
+        }
+        
+    }
+
+    //find student
+    public static int findStudent(String registrationNo){
+        for(int i=0;i<regNoArray.length;i++){
+            if(registrationNo.equals(regNoArray[i])){
+                return i;
+            }
+        }
+        return -1;
     }
 
     // View Students Profile
@@ -506,6 +593,25 @@ class StudentManagementSystemCLI {
         System.out.println("-------------------------------------------------------------------------");
         System.out.println("|\t\t\t\tView Student's Profile\t\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
+
+        System.out.print("Enter Student Registration No: ");
+            String id=input.nextLine();
+
+            int index=findStudent(id);
+            if(index!=-1){
+                System.out.println("\n\tRegistration no : "+regNoArray[index]);
+                System.out.println("\tStudet Name     : "+nameArray[index]);
+                System.out.println("\tStudet Name     : "+prfArray[index]);
+                System.out.println("\tStudet Name     : "+dbmsArray[index]);
+                
+            }else{
+
+            }
+        
+
+
+        
+
     }
 
     // Batch Management
