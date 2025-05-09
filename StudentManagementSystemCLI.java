@@ -13,6 +13,7 @@ class StudentManagementSystemCLI {
     // Batch data
     static int[] batchNameArray = { 105, 106, 107, 108, 109, 110 };
     static int[] batchStatusArray = { 0, 0, 0, 0, 1, 1 };
+    static int[] batchStudentCountArray={25,25,25,25,25,25};
 
     // Student data
     static String[] regNoArray = {
@@ -221,39 +222,7 @@ class StudentManagementSystemCLI {
 
     };
 
-    static int[] statusArray = {
-            1, 0, -1, 1, -1,
-            0, 1, 0, 1, 0,
-            -1, 1, -1, 1, 1,
-            0, 1, 0, 1, -1,
-            1, -1, 1, 0, 0,
-            0, 0, -1, -1, 0,
-            0, 0, 1, 0, -1,
-            1, -1, 0, 0, 1,
-            0, 0, 0, 0, 0,
-            0, -1, 0, -1, 1,
-            0, -1, -1, 1, 0,
-            1, 1, 0, -1, 0,
-            1, 0, 1, 0, 0,
-            1, 0, 0, -1, 0,
-            1, 0, -1, 1, 0,
-            1, 1, 1, -1, -1,
-            0, 0, 0, 0, -1,
-            -1, 1, 1, 1, 0,
-            1, 0, 0, -1, 1,
-            -1, 1, 0, 1, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
-    };
-
+    
     // console clear
     public final static void clearConsole() {
         try {
@@ -373,7 +342,6 @@ class StudentManagementSystemCLI {
                     int[] tempPrfArray=new int[regNoArray.length+1];
                     int[] tempDbmsArray=new int[regNoArray.length+1];
                     double[] tempGpaArray=new double[regNoArray.length+1];
-                    int[] tempStatusArray=new int[regNoArray.length+1];
 
                     for(int i=0;i<regNoArray.length;i++){
                         tempRegNoArray[i]=regNoArray[i];
@@ -382,7 +350,6 @@ class StudentManagementSystemCLI {
                         tempPrfArray[i]=prfArray[i];
                         tempDbmsArray[i]=dbmsArray[i];
                         tempGpaArray[i]=gpaArray[i];
-                        tempStatusArray[i]=statusArray[i];
                     }
                     tempRegNoArray[tempRegNoArray.length-1]=generatestudentId(lectureMode);
                     tempNameArray[tempRegNoArray.length-1]=name;
@@ -390,7 +357,6 @@ class StudentManagementSystemCLI {
                     tempPrfArray[tempRegNoArray.length-1]=-2;
                     tempDbmsArray[tempRegNoArray.length-1]=-2;
                     tempGpaArray[tempRegNoArray.length-1]=0;
-                    tempStatusArray[tempRegNoArray.length-1]=0;
 
                     regNoArray=tempRegNoArray;
                     nameArray=tempNameArray;
@@ -398,7 +364,12 @@ class StudentManagementSystemCLI {
                     prfArray=tempPrfArray;
                     dbmsArray=tempDbmsArray;
                     gpaArray=tempGpaArray;
-                    statusArray=tempStatusArray;
+
+                    for(int i=0;i<batchNameArray.length;i++){
+                        if(batch==batchNameArray[i]){
+                            batchStudentCountArray[i]++;
+                        }
+                    }
 
                     System.out.print("\nStudent was successfully added to the system.");
                     L2:do{
@@ -599,18 +570,35 @@ class StudentManagementSystemCLI {
 
             int index=findStudent(id);
             if(index!=-1){
-                System.out.println("\n\tRegistration no : "+regNoArray[index]);
-                System.out.println("\tStudet Name     : "+nameArray[index]);
-                System.out.println("\tStudet Name     : "+prfArray[index]);
-                System.out.println("\tStudet Name     : "+dbmsArray[index]);
+                // Clear the lines
+                System.out.print("\033[1A");  
+                System.out.print("\033[0J");
+
+                System.out.println("\n\tRegistration no      : "+regNoArray[index]);
+                System.out.println("\tStudet Name          : "+nameArray[index]);
+                System.out.println("\tStudet NIC           : "+nicArray[index]);
+                System.out.println("\tStudet PRF Marks     : "+(prfArray[index]==-1?"Absent":prfArray[index]==-2?"Not conducted":prfArray[index]));
+                System.out.println("\tStudet DBMS Marks    : "+(dbmsArray[index]==-1?"Absent":dbmsArray[index]==-2?"Not conducted":dbmsArray[index]));
+
                 
             }else{
+                System.out.print("\n\tThis student does not exist in the system.");
+            L:do{
+                System.out.print("\nDo you want to search another student details (Y/N): ");
+                String option=input.next();
+                if(option.equalsIgnoreCase("Y")){
+                    clearConsole();
+                    updateStudent();
+                }else if(option.equalsIgnoreCase("N")){
+                    clearConsole();
+                    homePage();
+                }else{
+                    System.out.println("\tInvalid option..input again...");
+                    continue L;
+                }
+            }while(true);
 
-            }
-        
-
-
-        
+            }        
 
     }
 
