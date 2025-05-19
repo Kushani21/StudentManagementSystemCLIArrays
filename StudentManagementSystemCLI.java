@@ -216,9 +216,9 @@ class StudentManagementSystemCLI {
 
     // home page
     public static void homePage() {
-        System.out.println("------------------------------------------------------------------");
-        System.out.println("|\t\t\tiCET Student Management System\t\t\t|");
-        System.out.println("------------------------------------------------------------------\n");
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println("|\t\t\tiCET Student Management System\t\t|");
+        System.out.println("-----------------------------------------------------------------\n");
         System.out.println("[1] Student Management");
         System.out.println("\n[2] Batch Management ");
         System.out.println("\n[3] Grade Management");
@@ -301,11 +301,11 @@ class StudentManagementSystemCLI {
     public static void deleteStudentsProfile() {
         Scanner input = new Scanner(System.in);
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tDelete Student Profile\t\t\t\t|");
+        System.out.println("|\t\t\t\tDelete Student Profile\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
 
         System.out.print("Enter Student Registration No: ");
-        String id = input.nextLine();
+        String id = input.next();
 
         int index = findStudent(id);
         if (index != -1) {
@@ -320,6 +320,7 @@ class StudentManagementSystemCLI {
                     + (prfArray[index] == -1 ? "Absent" : prfArray[index] == -2 ? "Not conducted" : prfArray[index]));
             System.out.println("\tStudet DBMS Marks    : " + (dbmsArray[index] == -1 ? "Absent"
                     : dbmsArray[index] == -2 ? "Not conducted" : dbmsArray[index]));
+            System.out.println("\tStudet GPA           : " + (calculateGPA(prfArray[index])+calculateGPA(dbmsArray[index]))/2);
 
             L: do {
                 System.out.print("\nDo you want to delete this student profile (Y/N): ");
@@ -392,7 +393,7 @@ class StudentManagementSystemCLI {
             } while (true);
 
         } else {
-            System.out.print("\n\tThis student does not exist in the system.");
+            System.out.print("\n\tThis student does not exist in the system.\n");
             L: do {
                 System.out.print("\nDo you want to delete another student profile (Y/N): ");
                 String option = input.next();
@@ -424,13 +425,16 @@ class StudentManagementSystemCLI {
             int batch = input.nextInt();
             if (checkBatchStatus(batch)) {
                 L3: do {
-                    System.out.print("Enter Student Name: ");
-                    String name = input.next();
-                    System.out.print("Enter Student NIC: ");
+                    System.out.print("\nEnter Student NIC: ");
                     String nic = input.next();
-                    System.out.print("Enter Lecturer Mode (1-PHYSICAL 0-ONLINE): ");
-                    int lectureMode = input.nextInt();
+                    
                     if ((checkedNic(nic) == -1)) {
+                        System.out.print("\nEnter Student Name: ");
+                        String name = input.next();
+                        System.out.print("\nEnter Lecturer Mode (1-PHYSICAL 0-ONLINE): ");
+                        int lectureMode = input.nextInt();
+                        String id=generatestudentId(lectureMode);
+
                         String[] tempRegNoArray = new String[regNoArray.length + 1];
                         String[] tempNameArray = new String[regNoArray.length + 1];
                         String[] tempNicArray = new String[regNoArray.length + 1];
@@ -446,7 +450,7 @@ class StudentManagementSystemCLI {
                             tempDbmsArray[i] = dbmsArray[i];
                             // tempGpaArray[i]=gpaArray[i];
                         }
-                        tempRegNoArray[tempRegNoArray.length - 1] = generatestudentId(lectureMode);
+                        tempRegNoArray[tempRegNoArray.length - 1] = id;
                         tempNameArray[tempRegNoArray.length - 1] = name;
                         tempNicArray[tempRegNoArray.length - 1] = nic;
                         tempPrfArray[tempRegNoArray.length - 1] = -2;
@@ -465,10 +469,10 @@ class StudentManagementSystemCLI {
                                 batchStudentCountArray[i]++;
                             }
                         }
-
-                        System.out.print("\nStudent was successfully added to the system.");
+                        System.out.print("\n\n\tStudent Registration No - "+id);
+                        System.out.print("\n\nStudent was successfully added to the system.");
                         L2: do {
-                            System.out.print("\nDo you want to add another student (Y/N): ");
+                            System.out.print("\n\nDo you want to add another student (Y/N): ");
                             String option = input.next();
                             if (option.equalsIgnoreCase("Y")) {
                                 clearConsole();
@@ -505,9 +509,9 @@ class StudentManagementSystemCLI {
                 } while (true);
 
             } else {
-                System.out.print("\n\tStudents cannot be added to this batch because enrollment is closed.");
+                System.out.print("\n\n\tStudents cannot be added to this batch because enrollment is closed.");
                 L2: do {
-                    System.out.print("\nDo you want to add student to another Batch (Y/N): ");
+                    System.out.print("\n\nDo you want to add student to another Batch (Y/N): ");
                     String option = input.next();
                     if (option.equalsIgnoreCase("Y")) {
                         clearConsole();
@@ -567,12 +571,12 @@ class StudentManagementSystemCLI {
         System.out.println("-------------------------------------------------------------------------\n");
 
         System.out.print("Enter Student Registration No: ");
-        String id = input.nextLine();
+        String id = input.next();
 
         int index = findStudent(id);
         if (index != -1) {
             // System.out.println("\n\tRegistration no : "+regNoArray[index]);
-            System.out.println("\tStudet Name     : " + nameArray[index]);
+            System.out.println("\n\tStudet Name     : " + nameArray[index]);
             System.out.println("\tStudet NIC     : " + nicArray[index]);
 
             System.out.println("\nWhat do you want to update ? ");
@@ -585,28 +589,32 @@ class StudentManagementSystemCLI {
                     clearConsole();
                     System.out.println("\nStudent Name Update");
                     System.out.println("====================\n");
-                    System.out.println("Registration No    - " + regNoArray[index]);
-                    System.out.println("Student NIC - " + nicArray[index]);
+                    System.out.println("Registration No   : " + regNoArray[index]);
+                    System.out.println("Student NIC       : " + nicArray[index]);
+                    System.out.println("Studet Current Name     : " + nameArray[index]);
                     System.out.print("\nEnter student name to update - ");
-                    String newName = input.nextLine();
+                    String newName = input.next();
                     nameArray[index] = newName;
-                    System.out.println("\n\tStudent name updated successfully...");
+                    System.out.println("\n\n\tStudent name updated successfully...");
+                    
                     break;
 
                 case 2:
                     clearConsole();
                     System.out.println("\nStudent NIC Update");
                     System.out.println("====================\n");
-                    System.out.println("Registration No    - " + regNoArray[index]);
-                    System.out.println("Student Name - " + nicArray[index]);
+                    System.out.println("Registration No     : " + regNoArray[index]);
+                    System.out.println("Student Name        : " + nameArray[index]);
+                    System.out.println("Student Current NIC : " + nicArray[index]);
                     System.out.print("\nEnter student NIC to update - ");
-                    String newNic = input.nextLine();
-                    nicArray[index] = newNic;
+                    String newNic = input.next();
                     if (checkedNic(newNic) == -1) {
+                        nicArray[index] = newNic;
                         System.out.println("\n\tStudent NIC updated successfully...");
                     } else {
-                        System.out.print("\n\tThis student is already added to the system...");
+                        System.out.println("\n\tThis student is already added to the system...");
                     }
+            }
 
                     L: do {
                         System.out.print("\nDo you want to update another student details (Y/N): ");
@@ -622,7 +630,7 @@ class StudentManagementSystemCLI {
                             continue L;
                         }
                     } while (true);
-            }
+            //}
         } else {
             System.out.print("\n\tThis student does not exist in the system.");
             L: do {
@@ -657,11 +665,11 @@ class StudentManagementSystemCLI {
     public static void viewStudentsProfile() {
         Scanner input = new Scanner(System.in);
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tView Student's Profile\t\t\t\t|");
+        System.out.println("|\t\t\t\tView Student's Profile\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
 
         System.out.print("Enter Student Registration No: ");
-        String id = input.nextLine();
+        String id = input.next();
 
         int index = findStudent(id);
         if (index != -1) {
@@ -681,12 +689,14 @@ class StudentManagementSystemCLI {
 
         } else {
             System.out.print("\n\tThis student does not exist in the system.");
+
+        }
             L: do {
                 System.out.print("\nDo you want to search another student details (Y/N): ");
                 String option = input.next();
                 if (option.equalsIgnoreCase("Y")) {
                     clearConsole();
-                    updateStudent();
+                    viewStudentsProfile();
                 } else if (option.equalsIgnoreCase("N")) {
                     clearConsole();
                     homePage();
@@ -696,7 +706,7 @@ class StudentManagementSystemCLI {
                 }
             } while (true);
 
-        }
+        
 
     }
 
@@ -721,11 +731,11 @@ public static double calculateGPA(int marks){
     // Batch Management
     public static void batchManagement() {
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tBatch Management\t\t\t\t|");
+        System.out.println("|\t\t\t\tBatch Management\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
         System.out.println("[1] Add Batch");
         System.out.println("\n[2] Update Batch ");
-        System.out.println("\n[3] View Batch");
+        System.out.println("\n[3] View Batches");
         System.out.println("\n[4] Exit");
 
         Scanner input = new Scanner(System.in);
@@ -748,7 +758,7 @@ public static double calculateGPA(int marks){
                     viewBatch();
                     break;
                 case 4:
-                    exittoHomePage();
+                    homePage();
                     break;
             }
         } while (true);
@@ -769,7 +779,7 @@ public static double calculateGPA(int marks){
         int[] tempBatchStatusArray=new int[batchStatusArray.length+1];
         int[] tempbatchStudentCountArray=new int[batchStudentCountArray.length+1];
 
-        for(int i=0;i<regNoArray.length;i++){
+        for(int i=0;i<batchNameArray.length;i++){
             tempBatchNameArray[i]=batchNameArray[i];
             tempBatchStatusArray[i]=batchStatusArray[i];
             tempbatchStudentCountArray[i]=batchStudentCountArray[i];
@@ -778,7 +788,7 @@ public static double calculateGPA(int marks){
         tempBatchStatusArray[tempBatchNameArray.length-1]=1;
         tempbatchStudentCountArray[tempBatchNameArray.length-1]=0;
 
-        System.out.print("\nBatch was successfully added to the system.");
+        System.out.print("\nBatch was successfully added to the system.\n");
         L: do {
             System.out.print("\nDo you want to add another batch to the system (Y/N): ");
             String option = input.next();
@@ -812,16 +822,27 @@ public static double calculateGPA(int marks){
         }
 
         if(index!=-1){
-            System.out.println("\nHow do you want to change the batch status? ");
-            System.out.println("\t(01) ENROLLMENT OPEN ");
-            System.out.println("\t(02) ENROLLMENT CLOSED ");
-            System.out.print("\nEnter your option - ");
-            int option = input.nextInt();
+            System.out.println("Current Status : "+(batchStatusArray[index] == 1 ? "ENROLLMENT OPEN" : "ENROLLMENT CLOSED"));
 
-            batchStatusArray[index]=(option==1)?1:0;
+            
+            L: do {
+                System.out.print("\nDo you want to change the batch status to "+(batchStatusArray[index] == 1 ?"ENROLLMENT CLOSED":"ENROLLMENT OPEN" )+"(Y/N) ? ");
+              String option1 = input.next();
+                if (option1.equalsIgnoreCase("Y")) {
+                    batchStatusArray[index]=(batchStatusArray[index]==1?0:1);
+                     System.out.println("\n\tBatch Status updated successfully...");
+                    break L;
+                } else if (option1.equalsIgnoreCase("N")) {
+                    break L;
+                } else {
+                    System.out.println("\tInvalid option..input again...");
+                    continue L;
+                }
+            } while (true);
 
-            System.out.println("\n\tBatch Status updated successfully...");
+            
 
+           
             L: do {
                 System.out.print("\nDo you want to update another batch details (Y/N): ");
                 String option1 = input.next();
@@ -917,11 +938,11 @@ for (int i = 0; i < batchNameArray.length; i++) {
     // Grade Management
     public static void gradeManagement() {
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tGrade Management\t\t\t\t|");
+        System.out.println("|\t\t\t\tGrade Management\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
         System.out.println("[1] PRF Marks Update");
-        System.out.println("[2] DBMS Marks Update ");
-        System.out.println("[3] Exit");
+        System.out.println("\n[2] DBMS Marks Update ");
+        System.out.println("\n[3] Exit");
 
         Scanner input = new Scanner(System.in);
         do {
@@ -950,12 +971,12 @@ for (int i = 0; i < batchNameArray.length; i++) {
     public static void prfMarksUpdate() {
         Scanner input = new Scanner(System.in);
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tPRF Marks Update\t\t\t\t|");
+        System.out.println("|\t\t\t\tPRF Marks Update\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
 
 
     System.out.print("Enter Student Registration No: ");
-        String id = input.nextLine();
+        String id = input.next();
 
         int index = findStudent(id);
         if (index != -1) {
@@ -988,13 +1009,14 @@ for (int i = 0; i < batchNameArray.length; i++) {
                 System.out.print("\tPRF Marks : "+prfArray[index]);   
 
                 L: do {
-                System.out.println("\nDo you want to update this student's PRF marks?");
+                System.out.print("\n\nDo you want to update this student's PRF marks?");
                 String option = input.next();
                 if (option.equalsIgnoreCase("Y")) {
                     System.out.print("\tEnter PRF Marks : ");
                 prfArray[index]=input.nextInt();
 
                 System.out.println("\n\tThis student PRF Marks updated successfully...");
+                break L;
                 } else if (option.equalsIgnoreCase("N")) {
                     clearConsole();
                     homePage();
@@ -1047,11 +1069,11 @@ for (int i = 0; i < batchNameArray.length; i++) {
     public static void dbmsMarksUpdate() {
         Scanner input = new Scanner(System.in);
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tDBMS Marks Update\t\t\t\t|");
+        System.out.println("|\t\t\t\tDBMS Marks Update\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
 
         System.out.print("Enter Student Registration No: ");
-        String id = input.nextLine();
+        String id = input.next();
 
         int index = findStudent(id);
         if (index != -1) {
@@ -1081,16 +1103,17 @@ for (int i = 0; i < batchNameArray.length; i++) {
 
                 System.out.println("\nThis student has already completed the DBMS module.");
 
-                System.out.print("\tDBMS Marks : "+dbmsArray[index]);   
+                System.out.println("\tDBMS Marks : "+dbmsArray[index]);   
 
                 L: do {
-                System.out.println("\nDo you want to update this student's DBMS marks?");
+                System.out.print("\nDo you want to update this student's DBMS marks?");
                 String option = input.next();
                 if (option.equalsIgnoreCase("Y")) {
                     System.out.print("\tEnter DBMS Marks : ");
                 dbmsArray[index]=input.nextInt();
 
                 System.out.println("\n\tThis student DBMS Marks updated successfully...");
+                break L;
                 } else if (option.equalsIgnoreCase("N")) {
                     clearConsole();
                     homePage();
@@ -1142,32 +1165,32 @@ for (int i = 0; i < batchNameArray.length; i++) {
 
     // Report Generator
     public static void reportGenerator() {
-        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------");
         System.out.println("|\t\t\t\tReport Generator\t\t\t\t|");
-        System.out.println("-------------------------------------------------------------------------\n");
-        System.out.println("[1] Batch Summary");
-        System.out.println("[2] Module Reports ");
-        System.out.println("[3] Batch Report");
-        System.out.println("[4] Exit");
+        System.out.println("---------------------------------------------------------------------------------\n");
+        System.out.println("[1] Student Registration Report");
+        System.out.println("\n[2] Batch-wise Student Report ");
+        System.out.println("\n[3] Industry Training Eligibility Report");
+        System.out.println("\n[4] Exit");
 
         Scanner input = new Scanner(System.in);
         do {
 
-            System.out.print("\nEnter an option to continue > ");
+            System.out.print("\n\nEnter an option to continue > ");
             int option = input.nextInt();
 
             switch (option) {
                 case 1:
                     clearConsole();
-                    batchSummary();
+                    studentRegistrationReport();
                     break;
                 case 2:
                     clearConsole();
-                    moduleReport();
+                    batchwiseStudentReport();
                     break;
                 case 3:
                     clearConsole();
-                    batchReport();
+                    industryTrainingEligibility();
                     break;
                 case 4:
                     exittoHomePage();
@@ -1177,30 +1200,220 @@ for (int i = 0; i < batchNameArray.length; i++) {
 
     }
 
-    // Batch Summary
-    public static void batchSummary() {
+    // Student Registration Report
+    public static void studentRegistrationReport() {
         Scanner input = new Scanner(System.in);
-        System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tBatch Summary\t\t\t\t|");
-        System.out.println("-------------------------------------------------------------------------\n");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\t\t     Student Registration Report    \t\t\t\t\t\t\t|");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------\n");
+
+
+        System.out.println("\n--------------------------------------------------------------------------------------------------------------------------------------");
+        String line1 = String.format("%-5s%-18s%-40s%-25s%-15s%-15s%-15s", "No", "Registration No", "Student Name","NIC", "PRF Marks","DBMS Marks","GPA");
+        System.out.println(line1);
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");
+
+        // Manual bubble sort (A to Z)
+        for (int i = 0; i < nameArray.length - 1; i++) {
+            for (int j = 0; j < nameArray.length - 1 - i; j++) {
+                if (nameArray[j].compareToIgnoreCase(nameArray[j + 1]) > 0) {
+                    // Swap nameArray[j] and nameArray[j + 1]
+                    String tempName = nameArray[j];
+                    String tempRegNo=regNoArray[j];
+                    String tempNic=nicArray[j];
+                    int tempPRF=prfArray[j];
+                    int tempDBMS=dbmsArray[j];
+
+                    nameArray[j] = nameArray[j + 1];
+                    regNoArray[j]=regNoArray[j+1];
+                    nicArray[j]=nicArray[j+1];
+                    prfArray[j]=prfArray[j+1];
+                    dbmsArray[j]=dbmsArray[j+1];
+
+                    nameArray[j + 1] = tempName;
+                    regNoArray[j+1]=tempRegNo;
+                    nicArray[j]=tempNic;
+                    prfArray[j]=tempPRF;
+                    dbmsArray[j]=tempPRF;
+
+                }
+            }
+        }
+
+
+        for (int i = 0; i < regNoArray.length; i++) {
+            String line = String.format(
+                 "%-5d%-18s%-40s%-14s%15d%15d%15f",
+                (i + 1),
+                regNoArray[i],
+                nameArray[i],
+                nicArray[i],
+                prfArray[i],
+                dbmsArray[i],
+                ((calculateGPA(prfArray[i])+calculateGPA(dbmsArray[i]))/2)
+                
+            );
+            System.out.println(line);
+
+        }
+
 
     }
 
-    // Module Reports
-    public static void moduleReport() {
+    // Batch-wise Student Report
+    public static void batchwiseStudentReport() {
         Scanner input = new Scanner(System.in);
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tModule Report\t\t\t\t|");
+        System.out.println("|\t\t\tBatch-wise Student Report\t\t\t|");
         System.out.println("-------------------------------------------------------------------------\n");
+
+        System.out.println("[1] 105 Batch");
+        System.out.println("\n[2] 106 Batch ");
+        System.out.println("\n[3] 107 Batch");
+        System.out.println("\n[4] 108 Batch");
+        System.out.println("\n[5] 109 Batch ");
+        System.out.println("\n[6] 110 Batch");
+        System.out.println("\n[7] Exit");
+
+        do {
+
+            System.out.print("\n\nEnter an option to continue > ");
+            int option = input.nextInt();
+
+            switch (option) {
+                case 1:
+                    clearConsole();
+                    batchReportPrint("105");
+                    break;
+                case 2:
+                    clearConsole();
+                    batchReportPrint("106");
+                    break;
+                case 3:
+                    clearConsole();
+                    batchReportPrint("107");
+                    break;
+                case 4:
+                    clearConsole();
+                    batchReportPrint("108");
+                    break;
+                case 5:
+                    clearConsole();
+                    batchReportPrint("109");
+                    break;
+                case 6:
+                    clearConsole();
+                    batchReportPrint("110");
+                    break;
+                default:
+                    exittoHomePage();
+                    break;
+            }
+        } while (true);
+    }
+
+    //batchReportPrint
+    public static void batchReportPrint(String batch){
+        Scanner input = new Scanner(System.in);
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\t\t     "+batch+" Batch Student Report\t\t\t\t\t\t\t|");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------\n");
+
+
+        System.out.println("\n-----------------------------------------------------------------------------------------------------------------------------");
+        String line1 = String.format("%-5s%-18s%-40s%-25s%-15s%-15s%-15s", "No", "Registration No", "Student Name","NIC", "PRF Marks","DBMS Marks","GPA");
+        System.out.println(line1);
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+        int no=1;
+        for(int i=0;i<regNoArray.length;i++){
+            if(batch.equals(regNoArray[i].substring(4, 7))){
+                String line = String.format(
+                 "%-5d%-18s%-40s%-14s%15d%15d%15f",
+                no,
+                regNoArray[i],
+                nameArray[i],
+                nicArray[i],
+                prfArray[i],
+                dbmsArray[i],
+                ((calculateGPA(prfArray[i])+calculateGPA(dbmsArray[i]))/2)
+                
+            );
+            System.out.println(line);
+            no++;
+            }
+        }
+
+        L2: do {
+                            System.out.print("\nDo you want to another batch report (Y/N): ");
+                            String option = input.next();
+                            if (option.equalsIgnoreCase("Y")) {
+                                clearConsole();
+                                batchwiseStudentReport();
+                            } else if (option.equalsIgnoreCase("N")) {
+                                clearConsole();
+                                homePage();
+                            } else {
+                                System.out.println("\tInvalid option..input again...");
+                                continue L2;
+                            }
+                        } while (true);
+
+
 
     }
 
-    // Batch Report
-    public static void batchReport() {
+    // Industry Training Eligibility
+    public static void industryTrainingEligibility() {
         Scanner input = new Scanner(System.in);
-        System.out.println("-------------------------------------------------------------------------");
-        System.out.println("|\t\t\t\tBatch Report\t\t\t\t|");
-        System.out.println("-------------------------------------------------------------------------\n");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("|\t\t\t\t  Industry Training Eligibility Student Report  \t\t\t\t\t\t|");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+        
+
+        System.out.println("\n-----------------------------------------------------------------------------------------------------------------------------");
+        String line1 = String.format("%-5s%-18s%-40s%-25s%-15s%-15s%-15s", "No", "Registration No", "Student Name","NIC", "PRF Marks","DBMS Marks","GPA");
+        System.out.println(line1);
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+        int no=1;
+
+        for(int i=0;i<regNoArray.length;i++){
+            double gpa=(calculateGPA(prfArray[i])+calculateGPA(dbmsArray[i]))/2;
+            if(prfArray[i]==-1||prfArray[i]==-2||dbmsArray[i]==-1||dbmsArray[i]==-2||prfArray[i]<50||dbmsArray[i]<50||gpa<3.25){
+                continue;
+            }else{
+                String line = String.format(
+                 "%-5d%-18s%-40s%-14s%15d%15d%15f",
+                no,
+                regNoArray[i],
+                nameArray[i],
+                nicArray[i],
+                prfArray[i],
+                dbmsArray[i],
+                gpa
+                
+            );
+            System.out.println(line);
+            no++;
+
+
+            }
+        }
+
+        L2: do {
+                            System.out.print("\nDo you want to go to homepage (Y/N): ");
+                            String option = input.next();
+                            if (option.equalsIgnoreCase("Y")) {
+                                clearConsole();
+                                homePage();
+                            } else if (option.equalsIgnoreCase("N")) {
+                                clearConsole();
+                                exit();
+                            } else {
+                                System.out.println("\tInvalid option..input again...");
+                                continue L2;
+                            }
+                        } while (true);
+
 
     }
 
